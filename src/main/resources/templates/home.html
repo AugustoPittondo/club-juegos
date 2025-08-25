@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><title>Club de Juegos</title></head>
+<head><meta charset="UTF-8"><title>Club de Juegos</title><link rel="stylesheet" href="/styles.css">
+</head>
 <body>
+<main class="container">
+
 <h1>Club de Juegos</h1>
 
 <section>
@@ -80,5 +83,6 @@
       const r=await fetch(`/api/ranking?juegoId=${juegoId}&ym=${ym}`); document.getElementById('rankingOut').textContent=await r.text();
     };
 </script>
+</main>
 </body>
 </html>

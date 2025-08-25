@@ -29,7 +29,7 @@ public class ClubServiceTest {
         // seed básico
         socioAnaId  = repo.save(new Socio("Ana")).getId();
         socioLuisId = repo.save(new Socio("Luis")).getId();
-        socioMoraId = repo.save(new Socio("Mora")).getId();
+        socioMoraId = repo.save(new Socio("Pepe")).getId();
 
         juegoCatanId = repo.save(new Juego("Catan")).getId();
         juegoAzulId  = repo.save(new Juego("Azul")).getId();
