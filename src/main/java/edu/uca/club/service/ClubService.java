@@ -17,8 +17,22 @@ public class ClubService {
 
     public Socio crearSocio(String nombre) {
         // TODO: validar no vacío, trim, longitud razonable, normalización
-        // TODO: prohibir duplicados exactos por nombre
-        throw new UnsupportedOperationException("TODO");
+        if(null==nombre){
+            throw new IllegalArgumentException("Nombre vacio");
+        }
+        String nombreNormalizado = nombre.trim().toLowerCase();
+
+        if (nombreNormalizado.length()<2 || nombreNormalizado.length()>50){
+            throw new IllegalArgumentException("nombre demasiado corto o demasiado largo");
+        }
+
+        boolean repetido = repo.socios().stream().
+                anyMatch(socio -> socio.getNombre().equals(nombre));
+        if (repetido) {
+            throw new IllegalStateException("Socio ya existe");
+        }
+
+        return repo.save(new Socio(nombre));
     }
 
     public Juego crearJuego(String nombre) {
