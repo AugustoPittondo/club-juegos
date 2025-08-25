@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Club de Juegos</title></head>
+<body>
+<h1>Club de Juegos</h1>
+
+<section>
+    <h2>Alta rápida</h2>
+    <form id="formSocio">
+        <input name="nombre" placeholder="Nombre socio">
+        <button type="submit">Crear socio</button>
+    </form>
+    <form id="formJuego">
+        <input name="nombre" placeholder="Nombre juego">
+        <button type="submit">Crear juego</button>
+    </form>
+</section>
+
+<section>
+    <h2>Crear sesión</h2>
+    <form id="formSesion">
+        <input type="date" name="fecha">
+        <select name="juegoId">
+            <option th:each="j : ${juegos}" th:value="${j.id}" th:text="${j.nombre}"></option>
+        </select>
+        <button type="submit">Crear sesión</button>
+    </form>
+</section>
+
+<section>
+    <h2>Cargar resultado</h2>
+    <form id="formResultado">
+        <input name="sesionId" placeholder="UUID sesión">
+        <select name="socioId">
+            <option th:each="s : ${socios}" th:value="${s.id}" th:text="${s.nombre}"></option>
+        </select>
+        <input name="puntos" type="number" min="-100" max="100" value="0">
+        <button type="submit">Cargar</button>
+    </form>
+</section>
+
+<section>
+    <h2>Ranking mensual</h2>
+    <form id="formRanking">
+        <select name="juegoId">
+            <option th:each="j : ${juegos}" th:value="${j.id}" th:text="${j.nombre}"></option>
+        </select>
+        <input name="ym" placeholder="YYYY-MM" value="2025-08">
+        <button type="submit">Ver</button>
+    </form>
+    <pre id="rankingOut"></pre>
+</section>
+
+<script>
+    async function post(url, data){
+      const r = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      if(!r.ok) throw new Error(await r.text());
+      return r.json();
+    }
+    document.getElementById('formSocio').onsubmit=async(e)=>{e.preventDefault();
+      const nombre=e.target.nombre.value.trim(); if(!nombre) return alert('Nombre vacío');
+      await post('/api/socios',{nombre}); location.reload();
+    };
+    document.getElementById('formJuego').onsubmit=async(e)=>{e.preventDefault();
+      const nombre=e.target.nombre.value.trim(); if(!nombre) return alert('Nombre vacío');
+      await post('/api/juegos',{nombre}); location.reload();
+    };
+    document.getElementById('formSesion').onsubmit=async(e)=>{e.preventDefault();
+      const fecha=e.target.fecha.value; const juegoId=e.target.juegoId.value;
+      const r=await post('/api/sesiones',{fecha,juegoId});
+      alert('Sesión creada: '+r.id);
+    };
+    document.getElementById('formResultado').onsubmit=async(e)=>{e.preventDefault();
+      const sesionId=e.target.sesionId.value; const socioId=e.target.socioId.value; const puntos=+e.target.puntos.value;
+      await post('/api/resultados',{sesionId,socioId,puntos});
+      alert('OK');
+    };
+    document.getElementById('formRanking').onsubmit=async(e)=>{e.preventDefault();
+      const juegoId=e.target.juegoId.value; const ym=e.target.ym.value;
+      const r=await fetch(`/api/ranking?juegoId=${juegoId}&ym=${ym}`); document.getElementById('rankingOut').textContent=await r.text();
+    };
+</script>
+</body>
+</html>
